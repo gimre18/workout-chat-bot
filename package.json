@@ -5,7 +5,8 @@
   "main": "app.js",
   "type": "module",
   "scripts": {
-    "test": " "
+    "test": " ",
+    "start": "nodemon --exec babel-node src/app.js"
   },
   "repository": {
     "type": "git",
@@ -22,5 +23,10 @@
     "dotenv": "^16.0.1",
     "ejs": "^3.1.8",
     "express": "^4.18.1"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "nodemon": "^2.0.16"
   }
 }
