@@ -1,16 +1,17 @@
 import dotenv from 'dotenv';
 dotenv.config();
 import request from 'request';
-import * as chatbotService  from "../services/chatBotService.js";
+import * as chatbotService from "../services/chatBotService.js";
+//import * as data from "../data/data.json"
 
 const MY_VERIFY_TOKEN = process.env.MY_VERIFY_TOKEN;
 const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
+var exercieses = [];
 
 
 let postWebhook = (req, res) => {
     // Parse the request body from the POST
     let body = req.body;
-
     // Check the webhook event is from a Page subscription
     if (body.object === 'page') {
 
@@ -75,8 +76,9 @@ let handleMessage = async (sender_psid, received_message) => {
 
     // Check if the message contains text
     if (received_message.text) {
+        initData();
         await chatbotService.sendGreeting(sender_psid);
-        
+
     } else if (received_message.attachments) {
         // Gets the URL of the message attachment
         let attachment_url = received_message.attachments[0].payload.url;
@@ -106,17 +108,23 @@ let handleMessage = async (sender_psid, received_message) => {
             }
         }
     }
-
-    // Sends the response message
-    callSendAPI(sender_psid, response);
 }
 
 // Handles messaging_postbacks events
-function handlePostback(sender_psid, received_postback) {
+let handlePostback = async (sender_psid, received_postback) => {
     let response;
 
     // Get the payload for the postback
     let payload = received_postback.payload;
+
+    switch (payload) {
+        case "GREETING":
+            if (received_postback.title == "YES") {
+                let exercies = getExercies();
+                console.log("exercies " + JSON.stringify(exercies));
+            }
+            break;
+    }
 
     // Set the response based on the postback payload
     if (payload === 'yes') {
@@ -151,6 +159,20 @@ function callSendAPI(sender_psid, response) {
             console.error("Unable to send message:" + err);
         }
     });
+}
+
+function initData() {
+    exercieses = data;
+}
+
+function getExercies() {
+    if (exercieses.length != 0) {
+        let exercies = exercieses[0];
+        exercieses.shift();
+        return exercies;
+    }
+
+    return null;
 }
 
 

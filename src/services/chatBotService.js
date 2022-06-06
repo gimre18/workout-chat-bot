@@ -39,7 +39,6 @@ let sendMessage = (sender_psid, response) => {
 let sendGreeting = (sender_psid) => {
     return new Promise(async (resolve, reject) => {
         try{
-            
             let response = {
                 "attachment": {
                     "type": "template",
@@ -50,12 +49,12 @@ let sendGreeting = (sender_psid) => {
                             {
                                 "type": "postback",
                                 "title": "YES",
-                                "payload": "START"
+                                "payload": "GREETING"
                             },
                             {
                                 "type": "postback",
                                 "title": "NO",
-                                "payload": "START",
+                                "payload": "GREETING",
                             }
                         ]
                     }
@@ -69,6 +68,8 @@ let sendGreeting = (sender_psid) => {
         }
     })
 };
+
+
 
 export {
     sendGreeting
