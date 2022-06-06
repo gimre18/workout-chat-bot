@@ -1,9 +1,11 @@
 import dotenv from 'dotenv';
 dotenv.config();
 import request from 'request';
+import * as chatbotService  from "../services/chatBotService.js";
 
 const MY_VERIFY_TOKEN = process.env.MY_VERIFY_TOKEN;
 const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
+
 
 let postWebhook = (req, res) => {
     // Parse the request body from the POST
@@ -68,18 +70,14 @@ let getWebhook = (req, res) => {
 }
 
 // Handles messages events
-function handleMessage(sender_psid, received_message) {
+let handleMessage = async (sender_psid, received_message) => {
     let response;
 
     // Check if the message contains text
     if (received_message.text) {
-
-        // Create the payload for a basic text message
-        response = {
-            "text": `You sent the message: "${received_message.text}". Now send me an image!`
-        }
+        await chatbotService.sendGreeting(sender_psid);
+        
     } else if (received_message.attachments) {
-
         // Gets the URL of the message attachment
         let attachment_url = received_message.attachments[0].payload.url;
         response = {
@@ -107,7 +105,6 @@ function handleMessage(sender_psid, received_message) {
                 }
             }
         }
-
     }
 
     // Sends the response message
@@ -116,7 +113,19 @@ function handleMessage(sender_psid, received_message) {
 
 // Handles messaging_postbacks events
 function handlePostback(sender_psid, received_postback) {
+    let response;
 
+    // Get the payload for the postback
+    let payload = received_postback.payload;
+
+    // Set the response based on the postback payload
+    if (payload === 'yes') {
+        response = { "text": "Thanks!" }
+    } else if (payload === 'no') {
+        response = { "text": "Oops, try sending another image." }
+    }
+    // Send the message to acknowledge the postback
+    callSendAPI(sender_psid, response);
 }
 
 // Sends response messages via the Send API
@@ -143,5 +152,7 @@ function callSendAPI(sender_psid, response) {
         }
     });
 }
+
+
 
 export { postWebhook, getWebhook }
