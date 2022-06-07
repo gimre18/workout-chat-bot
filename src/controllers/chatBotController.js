@@ -5,8 +5,6 @@ import * as chatbotService from "../services/chatBotService.js";
 import * as dataService from "../services/dataService.js";
 const MY_VERIFY_TOKEN = process.env.MY_VERIFY_TOKEN;
 const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
-var exercieses = [];
-
 
 let postWebhook = (req, res) => {
     // Parse the request body from the POST
@@ -140,18 +138,29 @@ let handlePostback = async (sender_psid, received_postback) => {
             break;
         case "EXCERCISE":
             if (received_postback.title == "YES") {
-                let exec = dataService.getDataById(payload[1]);
-                await chatbotService.sendMessage(exec.videoUrl);
-                await chatbotService.sendReady(sender_psid);
+                if (payload[1] == null) {
+                    console.log("payloud was null")
+                }
+                else {
+                    let exec = dataService.getDataById(payload[1]);
+                    await chatbotService.sendMessage(exec.videoUrl);
+                    await chatbotService.sendReady(sender_psid);
+                }
             } else {
                 await chatbotService.sendReady(sender_psid);
             }
             break;
         case "READYNEXTEX":
             if (received_postback.title == "YES") {
+                if (payload[1] == null) {
+                    console.log("payloud was null")
+                }
+                else {
+                    console.log("payloud:" + payload[1]);
                 let exec = dataService.getDataById(payload[1]);
+                console.log("exec: " + JSON.stringify(exec));
                 await chatbotService.sendExcercise(sender_psid, exec);
-                await chatbotService.sendReady(sender_psid);
+                }
             } else {
                 await chatbotService.sendStopWorkout(sender_psid);
             }
