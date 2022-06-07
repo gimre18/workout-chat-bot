@@ -1,16 +1,18 @@
 import dotenv from 'dotenv';
 dotenv.config();
 import request from 'request';
-import * as chatbotService  from "../services/chatBotService.js";
+import * as chatbotService from "../services/chatBotService.js";
+import * as dataService from "../services/dataService.js";
+
 
 const MY_VERIFY_TOKEN = process.env.MY_VERIFY_TOKEN;
 const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
+var exercieses = [];
 
 
 let postWebhook = (req, res) => {
     // Parse the request body from the POST
     let body = req.body;
-
     // Check the webhook event is from a Page subscription
     if (body.object === 'page') {
 
@@ -75,48 +77,134 @@ let handleMessage = async (sender_psid, received_message) => {
 
     // Check if the message contains text
     if (received_message.text) {
+        dataService.resetWorkout();
         await chatbotService.sendGreeting(sender_psid);
-        
-    } else if (received_message.attachments) {
-        // Gets the URL of the message attachment
-        let attachment_url = received_message.attachments[0].payload.url;
-        response = {
-            "attachment": {
-                "type": "template",
-                "payload": {
-                    "template_type": "generic",
-                    "elements": [{
-                        "title": "Is this the right picture?",
-                        "subtitle": "Tap a button to answer.",
-                        "image_url": attachment_url,
-                        "buttons": [
-                            {
-                                "type": "postback",
-                                "title": "Yes!",
-                                "payload": "yes",
-                            },
-                            {
-                                "type": "postback",
-                                "title": "No!",
-                                "payload": "no",
-                            }
-                        ],
-                    }]
-                }
-            }
-        }
-    }
 
-    // Sends the response message
-    callSendAPI(sender_psid, response);
+    } else if (received_message.attachments) {
+        // // Gets the URL of the message attachment
+        // let attachment_url = received_message.attachments[0].payload.url;
+        // response = {
+        //     "attachment": {
+        //         "type": "template",
+        //         "payload": {
+        //             "template_type": "generic",
+        //             "elements": [{
+        //                 "title": "Is this the right picture?",
+        //                 "subtitle": "Tap a button to answer.",
+        //                 "image_url": attachment_url,
+        //                 "buttons": [
+        //                     {
+        //                         "type": "postback",
+        //                         "title": "Yes!",
+        //                         "payload": "yes",
+        //                     },
+        //                     {
+        //                         "type": "postback",
+        //                         "title": "No!",
+        //                         "payload": "no",
+        //                     }
+        //                 ],
+        //             }]
+        //         }
+        //     }
+        // }
+    }
 }
 
 // Handles messaging_postbacks events
-function handlePostback(sender_psid, received_postback) {
+let handlePostback = async (sender_psid, received_postback) => {
     let response;
 
     // Get the payload for the postback
-    let payload = received_postback.payload;
+    let payload = received_postback.payload.split(':');
+
+    switch (payload[0]) {
+        case "GREETING":
+            if (received_postback.title == "YES") {
+                let exec = dataService.getExercise();
+                await chatbotService.sendReadyNextExercise(sender_psid, exec);
+            } else {
+                await chatbotService.sendStopWorkout(sender_psid);
+            }
+            break;
+        case "STOPWORKOUT":
+            if (received_postback.title == "YES") {
+                await chatbotService.sendFeedback(sender_psid);
+            } else {
+                let exec = dataService.getExercise();
+                if (exec == null) {
+                    await chatbotService.sendMessage("Greate! No more exercise for today. Workout Done ");
+                    await chatbotService.sendFeedback(sender_psid);
+                } else {
+                    await chatbotService.sendReadyNextExercise(sender_psid, exec);
+                }
+            }
+            break;
+        case "EXCERCISE":
+            if (received_postback.title == "YES") {
+                let exec = dataService.getDataById(payload[1]);
+                await chatbotService.sendMessage(exec.videoUrl);
+                await chatbotService.sendReady(sender_psid);
+            } else {
+                await chatbotService.sendReady(sender_psid);
+            }
+            break;
+        case "READYNEXTEX":
+            if (received_postback.title == "YES") {
+                let exec = dataService.getDataById(payload[1]);
+                await chatbotService.sendExcercise(sender_psid, exec);
+                await chatbotService.sendReady(sender_psid);
+            } else {
+                await chatbotService.sendStopWorkout(sender_psid);
+            }
+            break;
+        case "STARTWORKOUT":
+            if (received_postback.title == "Start workout") {
+                await chatbotService.sendDone(sender_psid);
+            } else {
+                await chatbotService.sendStop(sender_psid);
+            }
+            break;
+        case "DONE":
+            if (received_postback.title == "I’ve finished") {
+                let exec = dataService.getExercise();
+                if (exec == null) {
+                    await chatbotService.sendMessage("Greate! No more exercise for today. Workout Done ");
+                    await chatbotService.sendFeedback(sender_psid);
+                } else {
+                    await chatbotService.sendReadyNextExercise(sender_psid, exec);
+                }
+            } else {
+                await chatbotService.sendStop(sender_psid);
+            }
+            break;
+        case "STOPWORKOUT":
+            if (received_postback.title == "YES") {
+                await chatbotService.sendFeedback(sender_psid);
+            } else {
+                let exec = dataService.getExercise();
+                if (exec == null) {
+                    await chatbotService.sendMessage("Greate! No more exercise for today. Workout Done ");
+                    await chatbotService.sendFeedback(sender_psid);
+                } else {
+                    await chatbotService.sendReadyNextExercise(sender_psid, exec);
+                }
+            }
+            break;
+        case "STOPEXEC":
+            if (received_postback.title == "YES") {
+                await chatbotService.sendFeedback(sender_psid);
+            } else {
+                let exec = dataService.getExercise();
+                if (exec == null) {
+                    await chatbotService.sendMessage("Greate! No more exercise for today. Workout Done ");
+                    await chatbotService.sendFeedback(sender_psid);
+                } else {
+                    await chatbotService.sendReadyNextExercise(sender_psid, exec);
+                }
+            }
+            break;
+    }
 
     // Set the response based on the postback payload
     if (payload === 'yes') {
@@ -152,7 +240,6 @@ function callSendAPI(sender_psid, response) {
         }
     });
 }
-
 
 
 export { postWebhook, getWebhook }
