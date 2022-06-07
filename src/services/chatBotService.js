@@ -106,7 +106,7 @@ let sendExcercise = (sender_psid, excercise) => {
     })
 };
 
-let sendReady = (sender_psid) => {
+let sendReady = (sender_psid, execId) => {
     return new Promise(async (resolve, reject) => {
         try {
             let response = {
@@ -119,12 +119,12 @@ let sendReady = (sender_psid) => {
                             {
                                 "type": "postback",
                                 "title": "Start workout",
-                                "payload": "STARTWORKOUT"
+                                "payload": "STARTWORKOUT" 
                             },
                             {
                                 "type": "postback",
-                                "title": "Skip Workout",
-                                "payload": "STARTWORKOUT",
+                                "title": "Skip workout",
+                                "payload": "STARTWORKOUT:" + execId,
                             }
                         ]
                     }
@@ -172,7 +172,7 @@ let sendDone = (sender_psid) => {
     })
 };
 
-let sendStop = (sender_psid) => {
+let sendSkipExec = (sender_psid, execId) => {
     return new Promise(async (resolve, reject) => {
         try {
             let response = {
@@ -180,17 +180,17 @@ let sendStop = (sender_psid) => {
                     "type": "template",
                     "payload": {
                         "template_type": "button",
-                        "text": `Do you really want to stop the exercise`,
+                        "text": `Do you really want to skip the exercise`,
                         "buttons": [
                             {
                                 "type": "postback",
                                 "title": "YES",
-                                "payload": "STOPEXEC"
+                                "payload": "SKIPEXEC"
                             },
                             {
                                 "type": "postback",
                                 "title": "NO",
-                                "payload": "STOPEXEC",
+                                "payload": "SKIPEXEC:" + execId,
                             }
                         ]
                     }
@@ -315,7 +315,7 @@ export {
     sendExcercise,
     sendReady,
     sendDone,
-    sendStop,
+    sendSkipExec,
     sendReadyNextExercise,
     sendFeedback,
     sendStopWorkout

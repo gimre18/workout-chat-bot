@@ -138,29 +138,18 @@ let handlePostback = async (sender_psid, received_postback) => {
             break;
         case "EXCERCISE":
             if (received_postback.title == "YES") {
-                if (payload[1] == null) {
-                    console.log("payloud was null")
-                }
-                else {
-                    let exec = dataService.getDataById(payload[1]);
-                    await chatbotService.sendMessage(exec.videoUrl);
-                    await chatbotService.sendReady(sender_psid);
-                }
+                let exec = dataService.getDataById(payload[1]);
+                await chatbotService.sendMessage(sender_psid, exec.videoUrl);
+                await chatbotService.sendReady(sender_psid, payload[1]);
             } else {
-                await chatbotService.sendReady(sender_psid);
+                await chatbotService.sendReady(sender_psid, payload[1]);
             }
             break;
         case "READYNEXTEX":
             if (received_postback.title == "YES") {
-                if (payload[1] == null) {
-                    console.log("payloud was null")
-                }
-                else {
-                    console.log("payloud:" + payload[1]);
                 let exec = dataService.getDataById(payload[1]);
-                console.log("exec: " + JSON.stringify(exec));
                 await chatbotService.sendExcercise(sender_psid, exec);
-                }
+
             } else {
                 await chatbotService.sendStopWorkout(sender_psid);
             }
@@ -169,7 +158,7 @@ let handlePostback = async (sender_psid, received_postback) => {
             if (received_postback.title == "Start workout") {
                 await chatbotService.sendDone(sender_psid);
             } else {
-                await chatbotService.sendStop(sender_psid);
+                await chatbotService.sendSkipExec(sender_psid, payload[1]);
             }
             break;
         case "DONE":
@@ -182,13 +171,11 @@ let handlePostback = async (sender_psid, received_postback) => {
                     await chatbotService.sendReadyNextExercise(sender_psid, exec);
                 }
             } else {
-                await chatbotService.sendStop(sender_psid);
+                await chatbotService.sendSkipExec(sender_psid);
             }
             break;
-        case "STOPWORKOUT":
+        case "SKIPEXEC":
             if (received_postback.title == "YES") {
-                await chatbotService.sendFeedback(sender_psid);
-            } else {
                 let exec = dataService.getExercise();
                 if (exec == null) {
                     await chatbotService.sendMessage("Greate! No more exercise for today. Workout Done ");
@@ -196,13 +183,8 @@ let handlePostback = async (sender_psid, received_postback) => {
                 } else {
                     await chatbotService.sendReadyNextExercise(sender_psid, exec);
                 }
-            }
-            break;
-        case "STOPEXEC":
-            if (received_postback.title == "YES") {
-                await chatbotService.sendFeedback(sender_psid);
             } else {
-                let exec = dataService.getExercise();
+                let exec = dataService.getDataById(payload[1]);
                 if (exec == null) {
                     await chatbotService.sendMessage("Greate! No more exercise for today. Workout Done ");
                     await chatbotService.sendFeedback(sender_psid);

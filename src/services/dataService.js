@@ -65,15 +65,12 @@ function getAllData(){
 }
 
 function getDataById(id){
-    console.log("getDataById called, id: "+ id);
-    let result = data2.find(x => x.id == id);
-    console.log("data: " + JSON.stringify(data));
-    console.log("result: " + JSON.stringify(result));
+    let result = data.find(x => x.id == id);
     return result;
 }
 
 function resetWorkout(){
-    excercises = data;
+    excercises = JSON.parse(JSON.stringify(data)); 
 }
 
 function getExercise() {
