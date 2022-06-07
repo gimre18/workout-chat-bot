@@ -118,8 +118,6 @@ let handlePostback = async (sender_psid, received_postback) => {
         case "GREETING":
             if (received_postback.title == "YES") {
                 let exec = dataService.getExercise();
-                //test
-                await chatbotService.sendMessage(sender_psid, "start msg");
                 await chatbotService.sendReadyNextExercise(sender_psid, exec);
             } else {
                 await chatbotService.sendStopWorkout(sender_psid);
@@ -141,7 +139,7 @@ let handlePostback = async (sender_psid, received_postback) => {
         case "EXCERCISE":
             if (received_postback.title == "YES") {
                 let exec = dataService.getDataById(payload[1]);
-                await chatbotService.sendMessage(sender_psid, exec.videoUrl);
+                await chatbotService.sendMessage(sender_psid, {"text": exec.videoUrl });
                 await chatbotService.sendReady(sender_psid, payload[1]);
             } else {
                 await chatbotService.sendReady(sender_psid, payload[1]);
@@ -167,7 +165,7 @@ let handlePostback = async (sender_psid, received_postback) => {
             if (received_postback.title == "I’ve finished") {
                 let exec = dataService.getExercise();
                 if (exec == null) {
-                    await chatbotService.sendMessage("Greate! No more exercise for today. Workout Done ");
+                    await chatbotService.sendMessage(sender_psid, { "text": "Greate! No more exercise for today. Workout Done" });
                     await chatbotService.sendFeedback(sender_psid);
                 } else {
                     await chatbotService.sendReadyNextExercise(sender_psid, exec);
@@ -180,7 +178,7 @@ let handlePostback = async (sender_psid, received_postback) => {
             if (received_postback.title == "YES") {
                 let exec = dataService.getExercise();
                 if (exec == null) {
-                    await chatbotService.sendMessage("Greate! No more exercise for today. Workout Done ");
+                    await chatbotService.sendMessage(sender_psid, { "text": "Greate! No more exercise for today. Workout Done" });
                     await chatbotService.sendFeedback(sender_psid);
                 } else {
                     await chatbotService.sendReadyNextExercise(sender_psid, exec);
@@ -188,7 +186,7 @@ let handlePostback = async (sender_psid, received_postback) => {
             } else {
                 let exec = dataService.getDataById(payload[1]);
                 if (exec == null) {
-                    await chatbotService.sendMessage("Greate! No more exercise for today. Workout Done ");
+                    await chatbotService.sendMessage(sender_psid, {"text": "Greate! No more exercise for today. Workout Done" });
                     await chatbotService.sendFeedback(sender_psid);
                 } else {
                     await chatbotService.sendReadyNextExercise(sender_psid, exec);
