@@ -90,7 +90,7 @@ let sendExcercise = (sender_psid, excercise) => {
                                 {
                                     "type": "postback",
                                     "title": "NO",
-                                    "payload": "EXCERCISE",
+                                    "payload": "EXCERCISE:" + excercise.id,
                                 }
                             ],
                         }]
@@ -119,7 +119,7 @@ let sendReady = (sender_psid, execId) => {
                             {
                                 "type": "postback",
                                 "title": "Start workout",
-                                "payload": "STARTWORKOUT" 
+                                "payload": "STARTWORKOUT:T" + execId 
                             },
                             {
                                 "type": "postback",
@@ -139,7 +139,7 @@ let sendReady = (sender_psid, execId) => {
     })
 };
 
-let sendDone = (sender_psid) => {
+let sendDone = (sender_psid, execId) => {
     return new Promise(async (resolve, reject) => {
         try {
             let response = {
@@ -152,12 +152,12 @@ let sendDone = (sender_psid) => {
                             {
                                 "type": "postback",
                                 "title": "I’ve finished",
-                                "payload": "DONE"
+                                "payload": "DONE:" + execId,
                             },
                             {
                                 "type": "postback",
                                 "title": "I have to stop",
-                                "payload": "DONE",
+                                "payload": "DONE:" + execId,
                             }
                         ]
                     }
@@ -185,7 +185,7 @@ let sendSkipExec = (sender_psid, execId) => {
                             {
                                 "type": "postback",
                                 "title": "YES",
-                                "payload": "SKIPEXEC"
+                                "payload": "SKIPEXEC:" + execId,
                             },
                             {
                                 "type": "postback",
@@ -223,7 +223,7 @@ let sendReadyNextExercise = (sender_psid, excercise) => {
                             {
                                 "type": "postback",
                                 "title": "NO",
-                                "payload": "READYNEXTEX",
+                                "payload": "READYNEXTEX:" + excercise.id
                             }
                         ]
                     }

@@ -156,7 +156,7 @@ let handlePostback = async (sender_psid, received_postback) => {
             break;
         case "STARTWORKOUT":
             if (received_postback.title == "Start workout") {
-                await chatbotService.sendDone(sender_psid);
+                await chatbotService.sendDone(sender_psid, payload[1]);
             } else {
                 await chatbotService.sendSkipExec(sender_psid, payload[1]);
             }
@@ -171,7 +171,7 @@ let handlePostback = async (sender_psid, received_postback) => {
                     await chatbotService.sendReadyNextExercise(sender_psid, exec);
                 }
             } else {
-                await chatbotService.sendSkipExec(sender_psid);
+                await chatbotService.sendSkipExec(sender_psid, payload[1]);
             }
             break;
         case "SKIPEXEC":
