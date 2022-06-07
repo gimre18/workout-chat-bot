@@ -3,8 +3,6 @@ dotenv.config();
 import request from 'request';
 import * as chatbotService from "../services/chatBotService.js";
 import * as dataService from "../services/dataService.js";
-
-
 const MY_VERIFY_TOKEN = process.env.MY_VERIFY_TOKEN;
 const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
 var exercieses = [];
@@ -206,6 +204,15 @@ let handlePostback = async (sender_psid, received_postback) => {
             break;
     }
 
+    switch (payload) {
+        case "GREETING":
+            if (received_postback.title == "YES") {
+                let exercies = getExercies();
+                console.log("exercies " + JSON.stringify(exercies));
+            }
+            break;
+    }
+
     // Set the response based on the postback payload
     if (payload === 'yes') {
         response = { "text": "Thanks!" }
@@ -239,6 +246,20 @@ function callSendAPI(sender_psid, response) {
             console.error("Unable to send message:" + err);
         }
     });
+}
+
+function initData() {
+    exercieses = data;
+}
+
+function getExercies() {
+    if (exercieses.length != 0) {
+        let exercies = exercieses[0];
+        exercieses.shift();
+        return exercies;
+    }
+
+    return null;
 }
 
 

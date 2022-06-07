@@ -1,0 +1,22 @@
+{
+	"execises": [
+		{
+			"name": "Barbell push press",
+			"reps": 6,
+			"sets": 4,
+			"rest": 120
+		},
+		{
+			"name": "Bench press",
+			"reps": 12,
+			"sets": 4,
+			"rest": 80
+		},
+		{
+			"name": "Barbell bicep curls",
+			"reps": 10,
+			"sets": 5,
+			"rest": 120
+		}
+	]
+}

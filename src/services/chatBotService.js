@@ -38,6 +38,7 @@ let sendMessage = (sender_psid, response) => {
 
 let sendGreeting = (sender_psid) => {
     return new Promise(async (resolve, reject) => {
+<<<<<<< HEAD
         try {
             let response = {
                 "attachment": {
@@ -279,6 +280,9 @@ let sendFeedback = (sender_psid) => {
 let sendStopWorkout = (sender_psid) => {
     return new Promise(async (resolve, reject) => {
         try {
+=======
+        try{
+>>>>>>> fa849affe9ea295d524ba606f0e7ef56d475471c
             let response = {
                 "attachment": {
                     "type": "template",
@@ -289,12 +293,20 @@ let sendStopWorkout = (sender_psid) => {
                             {
                                 "type": "postback",
                                 "title": "YES",
+<<<<<<< HEAD
                                 "payload": "STOPWORKOUT"
+=======
+                                "payload": "GREETING"
+>>>>>>> fa849affe9ea295d524ba606f0e7ef56d475471c
                             },
                             {
                                 "type": "postback",
                                 "title": "NO",
+<<<<<<< HEAD
                                 "payload": "STOPWORKOUT",
+=======
+                                "payload": "GREETING",
+>>>>>>> fa849affe9ea295d524ba606f0e7ef56d475471c
                             }
                         ]
                     }
@@ -308,6 +320,8 @@ let sendStopWorkout = (sender_psid) => {
         }
     })
 };
+
+
 
 export {
     sendMessage,
