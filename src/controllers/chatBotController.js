@@ -118,6 +118,8 @@ let handlePostback = async (sender_psid, received_postback) => {
         case "GREETING":
             if (received_postback.title == "YES") {
                 let exec = dataService.getExercise();
+                //test
+                await chatbotService.sendMessage(sender_psid, "start msg");
                 await chatbotService.sendReadyNextExercise(sender_psid, exec);
             } else {
                 await chatbotService.sendStopWorkout(sender_psid);
@@ -129,7 +131,7 @@ let handlePostback = async (sender_psid, received_postback) => {
             } else {
                 let exec = dataService.getExercise();
                 if (exec == null) {
-                    await chatbotService.sendMessage("Greate! No more exercise for today. Workout Done ");
+                    await chatbotService.sendMessage(sender_psid, "Greate! No more exercise for today. Workout Done ");
                     await chatbotService.sendFeedback(sender_psid);
                 } else {
                     await chatbotService.sendReadyNextExercise(sender_psid, exec);
@@ -238,20 +240,5 @@ function callSendAPI(sender_psid, response) {
         }
     });
 }
-
-function initData() {
-    exercieses = data;
-}
-
-function getExercies() {
-    if (exercieses.length != 0) {
-        let exercies = exercieses[0];
-        exercieses.shift();
-        return exercies;
-    }
-
-    return null;
-}
-
 
 export { postWebhook, getWebhook }
