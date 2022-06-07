@@ -37,10 +37,10 @@ function getAllData(){
 
 function getDataById(id){
     console.log("getDataById called, id: "+ id);
-    let result = data.find(x => x.id == id);
+    let result = data.filter(x => x.id == id);
     console.log("data: " + JSON.stringify(data));
     console.log("result: " + JSON.stringify(result));
-    return result;
+    return result[0];
 }
 
 function resetWorkout(){
